@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import io
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 """function copied from https://fasttext.cc/docs/en/english-vectors.html"""
@@ -16,10 +17,6 @@ def load_vectors(fname):
 def get_features(words,vectors):
     return np.stack([vectors.loc[word].values for word in words])
 
-def parse_sentence_to_words(original_sentence):
-    print("Not implemented yet")
-    return
-
 """The structure of unwrapped_vectors is nested, that's why they are turned into a Dataframe
 before the words and their vectors are mapped together again"""
 unwrapped_vectors = load_vectors("../data/wiki-news-300d-1M.vec")
@@ -29,6 +26,12 @@ vectors_df = pd.DataFrame(list(df_values.values), index=df_keys.values.reshape(-
 
 sentences = np.load("../data/containAI.npy")
 features = dict()
+
+vectorizer = CountVectorizer(stop_words=["is", "are", "will", "the", "to"])
+analyze = vectorizer.build_analyzer()
+
+parsed_sentences = list()
 for sentence in sentences:
-    parsed_sentence = parse_sentence_to_words(sentence)
-    features[sentence] = get_features(parsed_sentence,vectors_df)
+    parsed_sentences.append(analyze(sentence))
+
+np.save("../data/sentences_vectors",parsed_sentences)
