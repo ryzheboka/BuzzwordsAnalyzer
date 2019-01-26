@@ -14,6 +14,7 @@ def load_vectors(fname):
         data[tokens[0]] = map(float, tokens[1:])
     return data
 
+
 def get_features(words,vectors):
     return np.stack([vectors.loc[word].values for word in words])
 
@@ -32,6 +33,6 @@ analyze = vectorizer.build_analyzer()
 
 parsed_sentences = list()
 for sentence in sentences:
-    parsed_sentences.append(analyze(sentence))
+    parsed_sentences.append(get_features(analyze(sentence),vectors_df))
 
 np.save("../data/sentences_vectors",parsed_sentences)
