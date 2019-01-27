@@ -16,7 +16,10 @@ def load_vectors(fname):
 
 
 def get_features(words,vectors):
-    return np.stack([vectors.loc[word].values for word in words])
+    result = [vectors.loc[word].values for word in words if word in df_keys.values.reshape(-1)]
+    if result:
+        return np.stack(result)
+    return None
 
 """The structure of unwrapped_vectors is nested, that's why they are turned into a Dataframe
 before the words and their vectors are mapped together again"""
@@ -33,6 +36,8 @@ analyze = vectorizer.build_analyzer()
 
 parsed_sentences = list()
 for sentence in sentences:
-    parsed_sentences.append(get_features(analyze(sentence),vectors_df))
+    sentence_matrix = get_features(analyze(sentence),vectors_df)
+    if not sentence_matrix is None:
+        parsed_sentences.append(sentence_matrix)
 
 np.save("../data/sentences_vectors",parsed_sentences)
