@@ -30,8 +30,8 @@ vectors_df = pd.DataFrame(list(df_values.values), index=df_keys.values.reshape(-
 
 sentences = np.load("../data/containAI.npy")
 features = dict()
-
-vectorizer = CountVectorizer(stop_words=["is", "are", "will", "the", "to"])
+stopwords = np.load("../data/stopwords.txt")
+vectorizer = CountVectorizer(stop_words=stopwords)
 analyze = vectorizer.build_analyzer()
 
 parsed_sentences = list()
