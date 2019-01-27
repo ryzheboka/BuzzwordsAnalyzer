@@ -36,14 +36,15 @@ filtered_articles = pd.concat(
 other_articles = [extract_rand_sentence(art) for art in medium_articles_textes[np.bitwise_and(
     -articles_mask, -articles_mask2)][:700]]
 
-sentences = [s for article in filtered_articles for s in extract_sentences_from_article(article)]
+sentences = list(set([s for article in filtered_articles for s in extract_sentences_from_article(article)]))
 question_mask = questions.str.contains(" AI ")
 question_mask2 = questions.str.contains(" Artificial Intelligence ")
 filtered_questions = pd.concat((
     questions[question_mask],
     questions[np.bitwise_and(-question_mask,question_mask2)]))
-other_questions = [q for q in questions[np.bitwise_and(-question_mask,-question_mask2)][:700]]
-print(other_questions)
+filtered_questions = filtered_questions.drop_duplicates()
+other_questions = list(set([q for q in questions[np.bitwise_and(-question_mask,-question_mask2)][:700]]))
+
 np.save("../data/containAI.npy",np.concatenate((sentences,filtered_questions.values)))
 np.save("../data/random_sentences.npy",np.concatenate((other_articles,other_questions)))
 
